@@ -100,8 +100,29 @@ const router = express.Router();
 
     });
 // PUT
-    router.put('/:id', validateUserId, (req, res) => {
+    router.put('/:id', validateUserId, async (req, res) => {
+        const { id } = req.params
+        const { name } = req.body
+        console.log("name", name)
+        console.log('id', id)
 
+        try {
+            if (name) {
+                const newName = await db.update(id, req.body)
+
+                if (newName) {
+                    res.status(200).json(newName)
+                } else {
+                    res
+                        .status(404)
+                        .json({message: "prepared object broken"})
+                }
+            } else {
+                res.status(500).json({ error: "The user could not be edited"})
+            }
+        } catch {
+            res.status(500).json({ error: "The user could not be edited"})
+        }
     });
 
 //custom middleware
