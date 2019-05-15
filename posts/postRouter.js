@@ -52,8 +52,34 @@ const router = express.Router();
 
     });
 // PUT
-    router.put('/:id', (req, res) => {
+    router.put('/:id', async (req, res) => {
+        const { id } = req.params
+        const { title, contents } = req.body;
+        console.log('req.body', req.body)
 
+        console.log('id', id)
+        
+        try {
+            if (title && contents ) {
+                const updatedPost = await db.update(id, req.body)
+                console.log(updatedPost)
+                if (updatedPost) {
+                    res.status(200).json(updatedPost)
+                } else {
+                    res
+                        .status(404)
+                        .json({message: "prepared object broken"})
+                }
+            } else {
+                res
+                    .status(404)
+                    .json({message: "please provide both the title and contents"})
+            }
+        } catch {
+            res
+                .status(500)
+                .json({ error: "The post could not be edited"})
+        }
     });
 
 // custom middleware
