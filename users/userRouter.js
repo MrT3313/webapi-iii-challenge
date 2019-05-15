@@ -49,6 +49,21 @@ const router = express.Router();
 });
 // POST
     router.post('/', async (req, res) => {
+        const user = req.body
+        console.log(user)
+        try {
+            const newUser = await db.insert(user)
+            if (newUser) {
+                res.status(200).json(newUser)
+            } else {
+                res.status(500).json({ error: "bro we sorry"})
+            }
+        } catch {
+            res
+                .status(500)
+                .json({ error: 'The Post information could not be retrieved'})
+        }
+
 
     });
 
