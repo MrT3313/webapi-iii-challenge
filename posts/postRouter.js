@@ -15,7 +15,7 @@ const router = express.Router();
         }
     });
 
-    router.get('/:id', async (req, res) => {
+    router.get('/:id', validatePostId, async (req, res) => {
         const { id } = req.params
         try {
             const post = await db.getById(id)
@@ -33,7 +33,7 @@ const router = express.Router();
         }
     });
 // DELETE
-    router.delete('/:id', async (req, res) => {
+    router.delete('/:id', validatePostId, async (req, res) => {
         const { id } = req.params
         try {
             const deletedPost = await db.remove(id)
@@ -52,7 +52,7 @@ const router = express.Router();
 
     });
 // PUT
-    router.put('/:id', async (req, res) => {
+    router.put('/:id', validatePostId, async (req, res) => {
         const { id } = req.params
         const { title, contents } = req.body;
         console.log('req.body', req.body)
@@ -83,9 +83,18 @@ const router = express.Router();
     });
 
 // custom middleware
+async function validatePostId(req, res, next) {
+    console.log('validatePostId Middleware')
+    const { id } = req.params
 
-function validatePostId(req, res, next) {
-
+    const post = await db.getById(id)
+    
+    if (post) {
+        req.post = post;
+        next();
+    } else {
+        res.status(404).json({ message: 'Post not found; invalid ID'})
+    }
 };
 
 module.exports = router;
