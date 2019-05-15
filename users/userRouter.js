@@ -1,9 +1,20 @@
 const express = require('express');
 
+const db = require('./userDb')
+
 const router = express.Router();
 // GET
-    router.get('/', (req, res) => {
-
+    router.get("/", async (req, res) => {
+        console.log('USERrouter -> /')
+        try {
+            const users = await db.get()
+            console.log(users)
+            res.status(200).json(users)
+        } catch (err) {
+            res
+                .status(500)
+                .json({ error: 'The user information could not be found'})
+        }
     });
 
     router.get('/:id', validateUserId, (req, res) => {

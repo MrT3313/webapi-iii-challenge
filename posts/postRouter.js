@@ -52,7 +52,7 @@ const router = express.Router();
 
     });
 // PUT
-    router.put('/:id', validatePostId, async (req, res) => {
+    router.put('/:id',validatePostId, async (req, res) => {
         const { id } = req.params
         const { title, contents } = req.body;
         console.log('req.body', req.body)
@@ -83,6 +83,7 @@ const router = express.Router();
     });
 
 // custom middleware
+
 async function validatePostId(req, res, next) {
     console.log('validatePostId Middleware')
     const { id } = req.params
