@@ -1,47 +1,61 @@
-const express = 'express';
+const express = require('express');
 
 const router = express.Router();
+// GET
+    router.get('/', (req, res) => {
 
-router.post('/', (req, res) => {
+    });
 
-});
+    router.get('/:id', validateUserId, (req, res) => {
 
-router.post('/:id/posts', (req, res) => {
+    });
 
-});
-
-router.get('/', (req, res) => {
-
-});
-
-router.get('/:id', (req, res) => {
+    router.get('/:id/posts', validateUserId, (req, res) => {
 
 });
+// POST
+    router.post('/', async (req, res) => {
 
-router.get('/:id/posts', (req, res) => {
+    });
 
-});
+    router.post('/:id/posts', validateUserId, (req, res) => {
 
-router.delete('/:id', (req, res) => {
+    });
+// DELETE
+    router.delete('/:id', validateUserId, (req, res) => {
 
-});
+    });
+// PUT
+    router.put('/:id', validateUserId, (req, res) => {
 
-router.put('/:id', (req, res) => {
-
-});
+    });
 
 //custom middleware
 
-function validateUserId(req, res, next) {
+async function validateUserId(req, res, next) {
+    console.log('validateUserId Middleware')
+    const { id } = req.params;
 
+    const user = await db.getById(id)
+    
+    if (user) {
+        req.user = user;
+        next();
+    } else {
+        res.status(404).json({ message: 'User not found; invalid ID'})
+    }
 };
 
 function validateUser(req, res, next) {
 
+
+    next()
 };
 
 function validatePost(req, res, next) {
 
+
+    next()
 };
 
 module.exports = router;
