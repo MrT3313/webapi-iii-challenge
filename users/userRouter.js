@@ -67,11 +67,36 @@ const router = express.Router();
 
     });
 
-    router.post('/:id/posts', validateUserId, (req, res) => {
+    router.post('/:id/posts', validateUserId, async (req, res) => {
+        // const { id } = req.params
+        // try {
+        //     const posts = await db.getUserPosts(id)
+        //     if (posts) {
+        //         res.status(200).json(posts)                
+        //     } else {
+        //         res.status(999).json({ error: 'fix this error message....'})
+        //     }
+        // } catch {
+        //     res
+        //         .status(500)
+        //         .json({ error: 'The Post information could not be retrieved'})
+        // }
 
     });
 // DELETE
-    router.delete('/:id', validateUserId, (req, res) => {
+    router.delete('/:id', validateUserId, async (req, res) => {
+        const { id } = req.params
+        try {
+            const deletedUser = await db.remove(id)
+            if (deletedUser) {
+                res.status(200).json(deletedUser)
+            } else {
+                res.status(999).json({ error: "user could not be deleted"})
+            }
+        } catch {
+            res.status(500).json({ error: "user could not be deleted"})
+        }
+
 
     });
 // PUT
