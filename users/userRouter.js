@@ -34,8 +34,18 @@ const router = express.Router();
         }
     });
 
-    router.get('/:id/posts', validateUserId, (req, res) => {
-
+    router.get('/:id/posts', validateUserId, async (req, res) => {
+        const { id } = req.params
+        try {
+            const posts = await db.getUserPosts(id)
+            if (posts) {
+                res.status(200).json(posts)
+            } else {
+                res.status(999).json({ error: "Another horrible USER error"})
+            }
+        } catch {
+            res.status(500).json({ error: "oops../:id/posts be broken"})
+        }
 });
 // POST
     router.post('/', async (req, res) => {
