@@ -33,7 +33,22 @@ const router = express.Router();
         }
     });
 // DELETE
-    router.delete('/:id', (req, res) => {
+    router.delete('/:id', async (req, res) => {
+        const { id } = req.params
+        try {
+            const deletedPost = await db.remove(id)
+            if (deletedPost) {
+                res.status(204).json(deletedPost)
+            } else {
+                res
+                    .status()
+                    .json({ error: "The post could not be found"})
+            }
+        } catch {
+            res
+                .status()
+                .json({ error: "The post could not be deleted"})
+        }
 
     });
 // PUT
