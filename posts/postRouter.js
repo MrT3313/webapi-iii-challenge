@@ -15,8 +15,22 @@ const router = express.Router();
         }
     });
 
-    router.get('/:id', (req, res) => {
-
+    router.get('/:id', async (req, res) => {
+        const { id } = req.params
+        try {
+            const post = await db.getById(id)
+            if (post) {
+                res.status(200).json(post)
+            } else {
+                res
+                    .status()
+                    .json({ error: "The post could not be found"})
+            }
+        } catch {
+            res
+                .status(500)
+                .json({ error: 'The Post information could not be retrieved'})
+        }
     });
 // DELETE
     router.delete('/:id', (req, res) => {
