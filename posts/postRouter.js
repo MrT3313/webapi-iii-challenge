@@ -23,8 +23,8 @@ const router = express.Router();
                 res.status(200).json(post)
             } else {
                 res
-                    .status()
-                    .json({ error: "The post could not be found"})
+                    .status(999)
+                    .json({ error: "The post could not be found, indalid ID"})
             }
         } catch {
             res

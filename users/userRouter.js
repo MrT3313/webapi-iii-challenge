@@ -17,8 +17,21 @@ const router = express.Router();
         }
     });
 
-    router.get('/:id', validateUserId, (req, res) => {
-
+    router.get('/:id', validateUserId, async (req, res) => {
+        const { id } = req.params
+        try {
+            const user = await db.getById(id)
+            if (user) {
+                res.status(200).json(user)
+            } else {
+                res
+                    .status(999)
+                    .json({ error: "The user could not be found, indalid ID"})
+            }
+        } catch {
+            res
+                .status(500).json({ error: 'The user information could not be retrieved'})
+        }
     });
 
     router.get('/:id/posts', validateUserId, (req, res) => {
