@@ -17,7 +17,7 @@ const router = express.Router();
         }
     });
 
-    router.get('/:id', validateUserId, async (req, res) => {
+    router.get('/:id',  validateUserId, async (req, res) => {
         const { id } = req.params
         try {
             const user = await db.getById(id)
@@ -68,19 +68,15 @@ const router = express.Router();
     });
 
     router.post('/:id/posts', validateUserId, async (req, res) => {
-        // const { id } = req.params
-        // try {
-        //     const posts = await db.getUserPosts(id)
-        //     if (posts) {
-        //         res.status(200).json(posts)                
-        //     } else {
-        //         res.status(999).json({ error: 'fix this error message....'})
-        //     }
-        // } catch {
-        //     res
-        //         .status(500)
-        //         .json({ error: 'The Post information could not be retrieved'})
-        // }
+        const { id } = req.params
+        try {
+            const newPost = await db.getUserPosts(id)
+
+        } catch {
+            res
+                .status(500)
+                .json({ error: 'The Post information could not be retrieved'})
+        }
 
     });
 // DELETE
@@ -100,11 +96,11 @@ const router = express.Router();
 
     });
 // PUT
-    router.put('/:id', validateUserId, async (req, res) => {
-        const { id } = req.params
-        const { name } = req.body
-        console.log("name", name)
-        console.log('id', id)
+    router.put('/:id', validateUserId, validateUser, async (req, res) => {
+        // const { id } = req.params
+        // const { name } = req.body
+        // console.log("name", name)
+        // console.log('id', id)
 
         try {
             if (name) {
@@ -125,8 +121,9 @@ const router = express.Router();
         }
     });
 
-//custom middleware
 
+
+/// CUSTOM MIDDLEWARE
 async function validateUserId(req, res, next) {
     console.log('validateUserId Middleware')
     const { id } = req.params;
@@ -142,15 +139,35 @@ async function validateUserId(req, res, next) {
 };
 
 function validateUser(req, res, next) {
+    console.log('ValidateUser middleware')
+    const bodyToPass = req.body
+    console.log('req.body / bodyToPass', req.body)
 
+    if (bodyToPass) {
+        if (bodyToPass.name) {
+            res.status(200).json(bodyToPass)
+        } else {
+            res.status(400).json({ message: 'missing required name field'})
+        }
+    } else {
+        res.status(500).json({ message: "missing user data"})
+    }
 
     next()
 };
 
 function validatePost(req, res, next) {
-
-
-    next()
+    console.log('ValidatePost middleware')
+    const newPost = req.body
+        if (newPost && Object.keys(newPost).length) {
+            if (( newPost.text).length) {
+                next();
+            } else {
+                res.status(400).json({ message: 'missing required text field'})
+            }
+        } else {
+            res.status(500).json({ message: 'missing post data'})
+        }
 };
 
 module.exports = router;

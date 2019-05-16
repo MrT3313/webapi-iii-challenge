@@ -3,7 +3,7 @@ const express = require('express');
 const db = require('./postDb')
 
 const router = express.Router();
-// GET
+//-1-// GET
     router.get('/', async (req, res) => {
         try {
             const posts = await db.get()
@@ -32,7 +32,7 @@ const router = express.Router();
                 .json({ error: 'The Post information could not be retrieved'})
         }
     });
-// DELETE
+//-2-// DELETE
     router.delete('/:id', validatePostId, async (req, res) => {
         const { id } = req.params
         try {
@@ -51,47 +51,27 @@ const router = express.Router();
         }
 
     });
-// PUT
-    router.put('/:id',validatePostId, async (req, res) => {
-        const { id } = req.params
-        const { title, contents } = req.body;
-        console.log('req.body', req.body)
-
-        console.log('id', id)
-        
+//-3-// PUT
+    router.put('/:id', validatePostId, async (req, res) => {
         try {
-            if (title && contents ) {
-                const updatedPost = await db.update(id, req.body)
-                console.log(updatedPost)
-                if (updatedPost) {
-                    res.status(200).json(updatedPost)
-                } else {
-                    res
-                        .status(404)
-                        .json({message: "prepared object broken"})
-                }
-            } else {
-                res
-                    .status(404)
-                    .json({message: "please provide both the title and contents"})
-            }
-        } catch {
-            res
-                .status(500)
-                .json({ error: "The post could not be edited"})
+            const {id} = req.params
+            const editPost = await db.update(id, req.body)
+            res.status(200).json(editPost)
+        } catch (err) {
+            releaseEvents.status(500).json({ message: "error with updating post"})
         }
     });
 
-// custom middleware
-
+// CUSTOM MIDDLEWARE
 async function validatePostId(req, res, next) {
     console.log('validatePostId Middleware')
+
     const { id } = req.params
 
-    const post = await db.getById(id)
+    const validID = await db.getById(id)
     
-    if (post) {
-        req.post = post;
+    if (validID) {
+        req.validID = validID;
         next();
     } else {
         res.status(404).json({ message: 'Post not found; invalid ID'})
